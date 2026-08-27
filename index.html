@@ -239,6 +239,18 @@ textarea::placeholder {
 <button onclick="addBook()">
     📚 登録する
 </button>
+<div
+    id="bookRegisterMessage"
+    style="
+        display:none;
+        margin-top:12px;
+        padding:10px 14px;
+        border-radius:10px;
+        background:#eef8ee;
+        color:#356b35;
+        font-weight:bold;
+    "
+></div>
 
 
 <hr>
@@ -474,6 +486,14 @@ textarea::placeholder {
 // ========================================
 
 function addBook() {
+
+    const registerMessage =
+        document.getElementById("bookRegisterMessage");
+
+    if (registerMessage) {
+        registerMessage.style.display = "none";
+    }
+
     const title = document.getElementById("bookTitle").value.trim();
     const author = document.getElementById("bookAuthor").value.trim();
     const totalPages = Number(document.getElementById("totalPages").value);
@@ -516,6 +536,20 @@ function addBook() {
     });
 
     saveCurrentBooks(currentBooks);
+
+    const registerMessage =
+        document.getElementById("bookRegisterMessage");
+
+    if (registerMessage) {
+        registerMessage.textContent =
+            `📖「${title}」を登録しました！`;
+        registerMessage.style.display = "block";
+
+        setTimeout(function() {
+            registerMessage.style.display = "none";
+        }, 3000);
+    }
+
     displayBook();
     displayProgress();
     displayBookshelf();
