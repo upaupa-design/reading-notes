@@ -1,0 +1,632 @@
+/* ========================================
+   基本設定
+======================================== */
+
+* {
+    box-sizing: border-box;
+}
+
+
+body {
+    margin: 0;
+    padding: 40px 20px 60px;
+
+    background: #f7f3ed;
+
+    color: #4f4a45;
+
+    font-family:
+        "Yu Gothic",
+        "Hiragino Kaku Gothic ProN",
+        sans-serif;
+
+    line-height: 1.7;
+}
+
+
+/* ========================================
+   ページ全体の横幅
+======================================== */
+
+body {
+    max-width: 1000px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+
+/* ========================================
+   タイトル
+======================================== */
+
+h1 {
+    margin: 0 0 5px;
+
+    text-align: center;
+
+    color: #58705d;
+
+    font-size: 34px;
+}
+
+
+body > p {
+    margin: 0 0 30px;
+
+    text-align: center;
+
+    color: #817970;
+}
+
+
+/* ========================================
+   セクションの見出し
+======================================== */
+
+h2 {
+    margin: 25px 0 0;
+
+    padding: 12px 18px;
+
+    background: #e7eee7;
+
+    border-radius: 12px 12px 0 0;
+
+    color: #526b58;
+
+    font-size: 20px;
+}
+
+
+h3 {
+    color: #65735f;
+}
+
+
+/* ========================================
+   「本を登録」の入力部分
+======================================== */
+
+body > p:not(:first-of-type) {
+    color: #6f6861;
+}
+
+
+/* 入力欄 */
+
+input[type="text"] {
+    display: block;
+
+    width: 100%;
+
+    margin: 5px 0 15px;
+
+    padding: 12px 14px;
+
+    border: 1px solid #d8d0c7;
+
+    border-radius: 8px;
+
+    background: white;
+
+    color: #4f4a45;
+
+    font-size: 16px;
+}
+
+
+input[type="text"]:focus {
+    outline: none;
+
+    border-color: #8fa893;
+
+    box-shadow:
+        0 0 0 3px rgba(143, 168, 147, 0.15);
+}
+
+
+/* ========================================
+   メモ入力
+======================================== */
+
+textarea {
+    display: block;
+
+    width: 100%;
+
+    min-height: 160px;
+
+    margin: 15px 0;
+
+    padding: 14px;
+
+    border: 1px solid #d8d0c7;
+
+    border-radius: 10px;
+
+    background: white;
+
+    color: #4f4a45;
+
+    font-family:
+        "Yu Gothic",
+        "Hiragino Kaku Gothic ProN",
+        sans-serif;
+
+    font-size: 16px;
+
+    line-height: 1.7;
+
+    resize: vertical;
+}
+
+
+textarea:focus {
+    outline: none;
+
+    border-color: #8fa893;
+
+    box-shadow:
+        0 0 0 3px rgba(143, 168, 147, 0.15);
+}
+
+
+/* ========================================
+   ボタン
+======================================== */
+
+button {
+    display: inline-block;
+
+    width: auto;
+
+    margin: 5px 5px 10px 0;
+
+    padding: 9px 18px;
+
+    border: none;
+
+    border-radius: 20px;
+
+    background: #78927d;
+
+    color: white;
+
+    font-size: 15px;
+
+    cursor: pointer;
+
+    transition: 0.2s;
+}
+
+
+button:hover {
+    background: #657f6b;
+
+    transform: translateY(-1px);
+}
+
+
+/* ========================================
+   今読んでいる本
+======================================== */
+
+#currentBook {
+    width: 100%;
+
+    padding: 20px;
+
+    background: white;
+
+    border-radius: 0 0 14px 14px;
+
+    box-shadow:
+        0 3px 10px rgba(0, 0, 0, 0.05);
+}
+
+
+#currentBook h3 {
+    margin-top: 0;
+
+    font-size: 22px;
+}
+
+
+/* ========================================
+   メモ一覧
+======================================== */
+
+#memoList {
+    width: 100%;
+
+    margin-top: 10px;
+}
+
+
+#memoList > div {
+    width: 100%;
+
+    margin-bottom: 12px;
+
+    padding: 15px;
+
+    background: #fffdf9;
+
+    border-left: 4px solid #a8b9a4;
+
+    border-radius: 8px;
+}
+
+
+/* ========================================
+   BGM
+======================================== */
+
+#bgm {
+    display: none;
+}
+
+
+/* 音量バー */
+
+input[type="range"] {
+    width: 220px;
+
+    max-width: 100%;
+
+    margin: 5px 0 15px;
+}
+
+
+/* ========================================
+   読書記録
+======================================== */
+
+#monthlyHistory {
+    width: 100%;
+
+    padding: 15px 20px;
+
+    background: white;
+
+    border-radius: 0 0 12px 12px;
+}
+
+
+#monthlyCount,
+#yearlyCount,
+#totalCount {
+    font-size: 24px;
+
+    color: #657b68;
+}
+
+
+/* ========================================
+   読書履歴
+======================================== */
+
+#readingHistory {
+    width: 100%;
+
+    display: grid;
+
+    grid-template-columns: repeat(2, 1fr);
+
+    gap: 15px;
+
+    margin-top: 0;
+}
+
+
+#readingHistory > div {
+    width: 100%;
+
+    padding: 20px;
+
+    background: white;
+
+    border-radius: 14px;
+
+    box-shadow:
+        0 3px 10px rgba(0, 0, 0, 0.05);
+}
+
+
+#readingHistory h3 {
+    margin-top: 0;
+
+    margin-bottom: 8px;
+
+    color: #58705d;
+}
+
+
+/* ========================================
+   読書記録の数字を見やすく
+======================================== */
+
+#monthlyCount,
+#yearlyCount,
+#totalCount {
+    font-weight: bold;
+}
+
+
+/* ========================================
+   区切り線
+======================================== */
+
+hr {
+    width: 100%;
+
+    margin: 30px 0;
+
+    border: none;
+
+    border-top: 1px solid #ddd5cc;
+}
+
+
+/* ========================================
+   読書履歴のメモ
+======================================== */
+
+[id^="historyMemo"] {
+    margin-top: 12px;
+
+    padding: 12px;
+
+    background: #fffdf9;
+
+    border-radius: 8px;
+}
+
+
+/* ========================================
+   スマートフォン
+======================================== */
+
+@media (max-width: 700px) {
+
+    body {
+        padding: 25px 14px 40px;
+    }
+
+
+    h1 {
+        font-size: 28px;
+    }
+
+
+    h2 {
+        font-size: 19px;
+    }
+
+
+    #readingHistory {
+        grid-template-columns: 1fr;
+    }
+
+
+    input[type="range"] {
+        width: 100%;
+    }
+
+}
+
+/* ========================================
+   読書記録カード
+======================================== */
+
+#readingStats {
+
+    display: grid;
+
+    grid-template-columns:
+        repeat(3, 1fr);
+
+    gap: 14px;
+
+    width: 100%;
+
+    margin: 0 0 20px;
+}
+
+
+.stat-card {
+
+    padding: 18px 12px;
+
+    background: white;
+
+    border: 1px solid #e4e1da;
+
+    border-radius: 12px;
+
+    text-align: center;
+
+    box-shadow:
+        0 2px 8px rgba(0, 0, 0, 0.04);
+}
+
+
+.stat-title {
+
+    margin-bottom: 8px;
+
+    color: #6f786f;
+
+    font-size: 14px;
+}
+
+
+.stat-number {
+
+    color: #58705d;
+
+    font-size: 28px;
+
+    font-weight: bold;
+}
+
+
+/* ========================================
+   月ごとの棒グラフ
+======================================== */
+
+.month-row {
+
+    display: grid;
+
+    grid-template-columns:
+        100px 1fr 50px;
+
+    align-items: center;
+
+    gap: 10px;
+
+    margin-bottom: 14px;
+}
+
+
+.month-label {
+
+    font-size: 14px;
+
+    white-space: nowrap;
+}
+
+
+.bar-area {
+
+    height: 20px;
+
+    background: #edf0eb;
+
+    border-radius: 10px;
+
+    overflow: hidden;
+}
+
+
+.reading-bar {
+
+    height: 100%;
+
+    min-width: 10px;
+
+    background: #8ba58e;
+
+    border-radius: 10px;
+
+    transition:
+        width 0.4s ease;
+}
+
+
+.month-count {
+
+    text-align: right;
+
+    font-weight: bold;
+
+    color: #657b68;
+}
+
+
+/* ========================================
+   スマホ
+======================================== */
+
+@media (max-width: 700px) {
+
+    #readingStats {
+
+        grid-template-columns: 1fr;
+
+    }
+
+
+    .month-row {
+
+        grid-template-columns:
+            85px 1fr 45px;
+
+        gap: 6px;
+    }
+
+}
+
+/* ========================================
+   読書進捗
+======================================== */
+
+#progressArea {
+    width: 100%;
+}
+
+
+.progress-card {
+    width: 100%;
+
+    padding: 20px;
+
+    background: white;
+
+    border-radius: 14px;
+
+    box-shadow:
+        0 3px 10px rgba(0, 0, 0, 0.05);
+}
+
+
+.progress-pages {
+    margin: 0 0 12px;
+
+    text-align: center;
+
+    color: #58705d;
+
+    font-size: 26px;
+
+    font-weight: bold;
+}
+
+
+.progress-bar {
+    width: 100%;
+
+    height: 24px;
+
+    margin: 10px 0;
+
+    background: #e8eee8;
+
+    border-radius: 12px;
+
+    overflow: hidden;
+}
+
+
+.progress-fill {
+    height: 100%;
+
+    background: #8ba58e;
+
+    border-radius: 12px;
+
+    transition:
+        width 0.4s ease;
+}
+
+
+.progress-percent {
+    margin: 5px 0 15px;
+
+    text-align: center;
+
+    color: #657b68;
+
+    font-weight: bold;
+}

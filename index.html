@@ -1,0 +1,2708 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+        content="width=device-width, initial-scale=1.0">
+
+    <title>読書の記録</title>
+
+    <link rel="stylesheet" href="style.css">
+
+<style>
+/* ========================================
+   読みやすさ・かわいさ調整
+======================================== */
+
+/* Google Fonts：丸みのある日本語フォント */
+@import url('https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1c:wght@400;500;600;700;800&display=swap');
+
+/* ページ全体 */
+body {
+    color: #171717 !important;
+    font-family:
+        "M PLUS Rounded 1c",
+        "Hiragino Maru Gothic ProN",
+        "Yu Gothic",
+        "Meiryo",
+        sans-serif !important;
+    font-weight: 500;
+    line-height: 1.8;
+    text-shadow:
+        0.3px 0.3px 0 rgba(255,255,255,0.7);
+}
+
+/* 見出しは少し太め */
+h1,
+h2,
+h3 {
+    color: #111111 !important;
+    font-family:
+        "M PLUS Rounded 1c",
+        "Hiragino Maru Gothic ProN",
+        "Yu Gothic",
+        "Meiryo",
+        sans-serif !important;
+    font-weight: 800 !important;
+    text-shadow:
+        0.5px 0.5px 0 rgba(255,255,255,0.85);
+}
+
+/* 普通の文章 */
+p,
+label,
+li,
+span,
+div {
+    color: #1a1a1a;
+}
+
+/* ボタン */
+button {
+    color: #111111 !important;
+    font-family:
+        "M PLUS Rounded 1c",
+        "Hiragino Maru Gothic ProN",
+        "Yu Gothic",
+        "Meiryo",
+        sans-serif !important;
+    font-weight: 700 !important;
+}
+
+/* 入力欄 */
+input,
+textarea,
+select {
+    color: #111111 !important;
+    font-family:
+        "M PLUS Rounded 1c",
+        "Hiragino Maru Gothic ProN",
+        "Yu Gothic",
+        "Meiryo",
+        sans-serif !important;
+    font-weight: 500;
+}
+
+/* プレースホルダーも少し見やすく */
+input::placeholder,
+textarea::placeholder {
+    color: #555555 !important;
+    opacity: 1;
+}
+
+/* 本棚などのカード内文字 */
+.bookshelf-book,
+.stat-card,
+.progress-card {
+    color: #111111;
+    font-weight: 500;
+}
+
+/* メモの文章を少し太めに */
+#globalMemoList p,
+#memoList p,
+#bookDetailContent p {
+    color: #111111 !important;
+    font-weight: 500;
+}
+</style>
+
+
+</head>
+
+
+<body
+    style="
+        background-image:
+            linear-gradient(
+                rgba(255, 255, 255, 0.78),
+                rgba(255, 255, 255, 0.78)
+            ),
+            url('Full-bookshelf.jpg');
+        background-size: cover;
+        background-position: center;
+        background-attachment: fixed;
+        background-repeat: no-repeat;
+    "
+>
+
+
+<h1>📖 読書の記録</h1>
+
+
+<!-- ==============================
+     BGM
+============================== -->
+
+<h2>🎵 読書BGM</h2>
+
+<p>
+    読書中に流す音楽を選べます。
+</p>
+
+<select
+    id="bgmSelect"
+    onchange="changeBGM()"
+>
+    <option value="music/nocturne-op9-2.mp3">
+        🎹 ショパン / ノクターン Op.9-2
+    </option>
+
+    <option value="music/gnossiennesno6.mp3">
+        🎹 サティ / グノシエンヌ第6番
+    </option>
+
+    <option value="music/arabesque1.mp3">
+        🎹 ドビュッシー / アラベスク第1番
+    </option>
+
+    <option value="music/gymnopedies1.mp3">
+        🎹 サティ / ジムノペディ第1番
+    </option>
+</select>
+
+<br><br>
+
+<audio
+    id="bgm"
+    src="music/nocturne-op9-2.mp3"
+    loop
+></audio>
+
+<button onclick="playBGM()">
+    ▶ 再生
+</button>
+
+<button onclick="pauseBGM()">
+    ⏸ 一時停止
+</button>
+
+<p>
+    🔊 音量
+</p>
+
+<input
+    type="range"
+    id="volume"
+    min="0"
+    max="1"
+    step="0.01"
+    value="0.5"
+    oninput="changeVolume()"
+>
+
+<hr>
+
+<!-- ==============================
+     本を登録
+============================== -->
+
+<h2>📚 本を登録</h2>
+
+<p>本のタイトル</p>
+
+<input
+    type="text"
+    id="bookTitle"
+    placeholder="例：生きるということ"
+>
+
+
+<p>著者</p>
+
+<input
+    type="text"
+    id="bookAuthor"
+    placeholder="例：エーリッヒ・フロム"
+>
+
+
+<p>📄 全ページ数</p>
+
+<input
+    type="number"
+    id="totalPages"
+    placeholder="例：300"
+    min="1"
+>
+
+
+<button onclick="addBook()">
+    📚 本を登録する
+</button>
+
+
+<hr>
+
+
+<!-- ==============================
+     読みたい本を登録
+============================== -->
+
+<h2>📌 読みたい本を登録</h2>
+
+<p>本のタイトル</p>
+
+<input
+    type="text"
+    id="wantBookTitle"
+    placeholder="例：愛するということ"
+>
+
+<p>著者</p>
+
+<input
+    type="text"
+    id="wantBookAuthor"
+    placeholder="例：エーリッヒ・フロム"
+>
+
+<br><br>
+
+<button onclick="addWantBook()">
+    📌 読みたい本に追加
+</button>
+
+
+<hr>
+
+
+<!-- ==============================
+     読書メモ
+============================== -->
+
+<h2>📝 読書メモ</h2>
+
+<textarea
+    id="memoText"
+    rows="8"
+    placeholder="ここに読書中の気づきや感想を書いてください"
+></textarea>
+
+
+<button onclick="saveMemo()">
+    💾 メモを保存
+</button>
+
+
+<h3>🔍 すべての本のメモを検索</h3>
+
+<input
+    type="text"
+    id="globalMemoSearch"
+    placeholder="🔍 メモを単語で検索"
+    oninput="searchAllMemos()"
+>
+
+<br><br>
+
+<div id="globalMemoList">
+    <p>まだメモはありません。</p>
+</div>
+
+
+<hr>
+
+<!-- ==============================
+     今読んでいる本
+============================== -->
+
+<h2>📖 今読んでいる本</h2>
+
+<div id="currentBook">
+
+    <p>
+        まだ本が登録されていません。
+    </p>
+
+</div>
+
+
+<!-- ==============================
+     本棚
+============================== -->
+
+<h2>📚 本棚</h2>
+
+<input
+    type="text"
+    id="bookshelfSearch"
+    placeholder="🔍 本のタイトルや著者を検索"
+    oninput="searchBookshelf()"
+>
+
+<br><br>
+
+<div id="bookshelf">
+    <p>本を登録すると本棚に表示されます。</p>
+</div>
+
+<div id="bookDetail" style="display:none;">
+
+    <hr>
+
+    <h2>📖 本の詳細</h2>
+
+    <div id="bookDetailContent"></div>
+
+</div>
+
+<hr>
+
+
+<!-- ==============================
+     読書進捗
+============================== -->
+
+<h2>📖 読書進捗</h2>
+
+<div id="progressArea">
+
+    <p>
+        本を登録すると進捗を記録できます。
+    </p>
+
+</div>
+
+
+<hr>
+
+
+
+
+
+
+
+
+<!-- ==============================
+     読書記録
+============================== -->
+
+<h2>📊 読書記録</h2>
+
+
+<div id="readingStats">
+
+
+    <div class="stat-card">
+
+        <div class="stat-title">
+            📅 今月読んだ本
+        </div>
+
+        <div class="stat-number">
+            <span id="monthlyCount">0</span>冊
+        </div>
+
+    </div>
+
+
+    <div class="stat-card">
+
+        <div class="stat-title">
+            📆 今年読んだ本
+        </div>
+
+        <div class="stat-number">
+            <span id="yearlyCount">0</span>冊
+        </div>
+
+    </div>
+
+
+    <div class="stat-card">
+
+        <div class="stat-title">
+            📚 累計
+        </div>
+
+        <div class="stat-number">
+            <span id="totalCount">0</span>冊
+        </div>
+
+    </div>
+
+
+</div>
+
+
+<h3>
+    📈 月ごとの読書冊数
+</h3>
+
+<p>
+    上の3つは「今どれくらい読んでいるか」、
+    こちらは「月ごとの読書ペース」を確認するための記録です。
+</p>
+
+
+<div id="monthlyHistory">
+
+    <p>
+        まだ読了した本はありません。
+    </p>
+
+</div>
+
+
+<script>
+
+
+// ========================================
+// 本を登録する
+// ========================================
+
+function addBook() {
+
+
+    const title =
+        document.getElementById(
+            "bookTitle"
+        ).value;
+
+
+    const author =
+        document.getElementById(
+            "bookAuthor"
+        ).value;
+
+
+    const totalPages =
+        Number(
+            document.getElementById(
+                "totalPages"
+            ).value
+        );
+
+
+    if (!title) {
+
+        alert(
+            "本のタイトルを入力してください。"
+        );
+
+        return;
+
+    }
+
+
+    if (!totalPages || totalPages < 1) {
+
+        alert(
+            "全ページ数を入力してください。"
+        );
+
+        return;
+
+    }
+
+
+    const book = {
+
+        title: title,
+
+        author:
+            author || "著者不明",
+
+        totalPages:
+            totalPages,
+
+        currentPage:
+            0,
+
+        status:
+            "reading"
+
+    };
+
+
+    localStorage.setItem(
+        "currentBook",
+        JSON.stringify(book)
+    );
+
+
+    displayBook(book);
+
+    displayProgress(book);
+
+    displayBookshelf();
+
+
+    document.getElementById(
+        "bookTitle"
+    ).value = "";
+
+
+    document.getElementById(
+        "bookAuthor"
+    ).value = "";
+
+
+    document.getElementById(
+        "totalPages"
+    ).value = "";
+
+
+    displayMemos();
+
+}
+
+
+
+// ========================================
+// 今読んでいる本を表示
+// ========================================
+
+function displayBook(book) {
+
+
+    document.getElementById(
+        "currentBook"
+    ).innerHTML = `
+
+        <h3>
+            📕 ${book.title}
+        </h3>
+
+        <p>
+            著者：${book.author}
+        </p>
+
+        <p>
+            全${book.totalPages}ページ
+        </p>
+
+        <button onclick="finishBook()">
+            🎉 読了した！
+        </button>
+
+        <button onclick="deleteCurrentBook()">
+            🗑️ この本を削除
+        </button>
+
+    `;
+
+}
+
+
+
+// ========================================
+// 保存されている本を読み込む
+// ========================================
+
+function loadBook() {
+
+
+    const savedBook =
+        localStorage.getItem(
+            "currentBook"
+        );
+
+
+    if (savedBook) {
+
+        const book =
+            JSON.parse(savedBook);
+
+        displayBook(book);
+
+        displayProgress(book);
+
+        displayBookshelf();
+
+    }
+
+}
+
+
+
+// ========================================
+// 本棚を表示
+// ========================================
+
+function displayBookshelf() {
+
+    renderBookshelf("");
+
+}
+
+
+// ========================================
+// 本棚を検索
+// ========================================
+
+function searchBookshelf() {
+
+    const searchInput =
+        document.getElementById(
+            "bookshelfSearch"
+        );
+
+    const keyword =
+        searchInput
+        ? searchInput.value.trim().toLowerCase()
+        : "";
+
+    renderBookshelf(keyword);
+
+}
+
+
+// ========================================
+// 本棚タブを切り替える
+// ========================================
+
+function switchBookshelfTab(tabName) {
+
+    const tabs = [
+        "want",
+        "current",
+        "finished"
+    ];
+
+    tabs.forEach(function(tab) {
+
+        const button =
+            document.getElementById(
+                "bookshelfTab-" + tab
+            );
+
+        const content =
+            document.getElementById(
+                "bookshelfContent-" + tab
+            );
+
+        if (button) {
+            button.classList.remove("active");
+        }
+
+        if (content) {
+            content.style.display = "none";
+        }
+
+    });
+
+    const activeButton =
+        document.getElementById(
+            "bookshelfTab-" + tabName
+        );
+
+    const activeContent =
+        document.getElementById(
+            "bookshelfContent-" + tabName
+        );
+
+    if (activeButton) {
+        activeButton.classList.add("active");
+    }
+
+    if (activeContent) {
+        activeContent.style.display = "block";
+    }
+
+}
+
+
+// ========================================
+// 本棚を描画
+// ========================================
+
+function renderBookshelf(keyword) {
+
+    const bookshelf =
+        document.getElementById("bookshelf");
+
+    if (!bookshelf) {
+        return;
+    }
+
+    let wantBooks = [];
+    let currentBook = null;
+    let finishedBooks = [];
+
+    const savedWantBooks =
+        localStorage.getItem(
+            "wantToReadBooks"
+        );
+
+    const savedCurrentBook =
+        localStorage.getItem(
+            "currentBook"
+        );
+
+    const savedFinishedBooks =
+        localStorage.getItem(
+            "finishedBooks"
+        );
+
+    // 以前のバージョンの読書履歴を一度だけ移行
+    const savedHistory =
+        localStorage.getItem(
+            "finishedBooks"
+        );
+
+    if (savedWantBooks) {
+        wantBooks =
+            JSON.parse(savedWantBooks);
+    }
+
+    if (savedCurrentBook) {
+        currentBook =
+            JSON.parse(savedCurrentBook);
+    }
+
+    if (savedFinishedBooks) {
+        finishedBooks =
+            JSON.parse(savedFinishedBooks);
+    } else if (savedHistory) {
+
+        finishedBooks =
+            JSON.parse(savedHistory);
+
+        localStorage.setItem(
+            "finishedBooks",
+            JSON.stringify(finishedBooks)
+        );
+
+    }
+
+    function matches(book) {
+
+        if (!keyword) {
+            return true;
+        }
+
+        const title =
+            String(book.title || "")
+            .toLowerCase();
+
+        const author =
+            String(book.author || "")
+            .toLowerCase();
+
+        return (
+            title.includes(keyword) ||
+            author.includes(keyword)
+        );
+
+    }
+
+    const filteredWantBooks =
+        wantBooks.filter(matches);
+
+    const filteredCurrentBook =
+        currentBook &&
+        matches(currentBook)
+            ? currentBook
+            : null;
+
+    const filteredFinishedBooks =
+        finishedBooks.filter(matches);
+
+    bookshelf.innerHTML = `
+
+        <div class="bookshelf-tabs">
+
+            <button
+                id="bookshelfTab-want"
+                class="bookshelf-tab active"
+                onclick="switchBookshelfTab('want')"
+            >
+                📌 読みたい
+                (${filteredWantBooks.length})
+            </button>
+
+            <button
+                id="bookshelfTab-current"
+                class="bookshelf-tab"
+                onclick="switchBookshelfTab('current')"
+            >
+                📖 読んでいる
+                (${filteredCurrentBook ? 1 : 0})
+            </button>
+
+            <button
+                id="bookshelfTab-finished"
+                class="bookshelf-tab"
+                onclick="switchBookshelfTab('finished')"
+            >
+                📕 読了
+                (${filteredFinishedBooks.length})
+            </button>
+
+        </div>
+
+
+        <div
+            id="bookshelfContent-want"
+            class="bookshelf-tab-content"
+        >
+
+            ${
+                filteredWantBooks.length > 0
+
+                ?
+
+                filteredWantBooks
+                    .slice()
+                    .reverse()
+                    .map(function(book) {
+
+                        const index =
+                            wantBooks.indexOf(book);
+
+                        return `
+
+                            <div
+                                class="bookshelf-book"
+                                onclick="showBookDetail('want', ${index})"
+                                style="cursor:pointer;"
+                            >
+
+                                <p>
+                                    📕 ${book.title}
+                                </p>
+
+                                <p>
+                                    著者：${book.author}
+                                </p>
+
+                                <button
+                                    onclick="event.stopPropagation(); startWantBook(${index})"
+                                >
+                                    📖 この本を読み始める
+                                </button>
+
+                                <button
+                                    onclick="event.stopPropagation(); deleteWantBook(${index})"
+                                >
+                                    🗑️ 削除
+                                </button>
+
+                            </div>
+
+                        `;
+
+                    })
+                    .join("")
+
+                :
+
+                `
+                    <p>
+                        ${
+                            keyword
+                            ? "一致する本はありません。"
+                            : "読みたい本はまだありません。"
+                        }
+                    </p>
+                `
+            }
+
+        </div>
+
+
+        <div
+            id="bookshelfContent-current"
+            class="bookshelf-tab-content"
+            style="display:none;"
+        >
+
+            ${
+                filteredCurrentBook
+
+                ?
+
+                `
+                    <div
+                        class="bookshelf-book"
+                        onclick="showBookDetail('current', 0)"
+                        style="cursor:pointer;"
+                    >
+
+                        <p>
+                            📕 ${filteredCurrentBook.title}
+                        </p>
+
+                        <p>
+                            著者：${filteredCurrentBook.author}
+                        </p>
+
+                        <p>
+                            ${filteredCurrentBook.currentPage || 0}
+                            /
+                            ${filteredCurrentBook.totalPages || 0}
+                            ページ
+                        </p>
+
+                    </div>
+                `
+
+                :
+
+                `
+                    <p>
+                        ${
+                            keyword
+                            ? "一致する本はありません。"
+                            : "今読んでいる本はありません。"
+                        }
+                    </p>
+                `
+            }
+
+        </div>
+
+
+        <div
+            id="bookshelfContent-finished"
+            class="bookshelf-tab-content"
+            style="display:none;"
+        >
+
+            ${
+                filteredFinishedBooks.length > 0
+
+                ?
+
+                filteredFinishedBooks
+                    .slice()
+                    .reverse()
+                    .map(function(book) {
+
+                        const index =
+                            finishedBooks.indexOf(book);
+
+                        return `
+
+                            <div
+                                class="bookshelf-book"
+                                onclick="showBookDetail('finished', ${index})"
+                                style="cursor:pointer;"
+                            >
+
+                                <p>
+                                    📕 ${book.title}
+                                </p>
+
+                                <p>
+                                    著者：${book.author}
+                                </p>
+
+                                <p>
+                                    読了日：
+                                    ${book.finishedDate || "記録なし"}
+                                </p>
+
+                                <button
+                                    onclick="event.stopPropagation(); deleteFinishedBook(${index})"
+                                >
+                                    🗑️ 削除
+                                </button>
+
+                            </div>
+
+                        `;
+
+                    })
+                    .join("")
+
+                :
+
+                `
+                    <p>
+                        ${
+                            keyword
+                            ? "一致する本はありません。"
+                            : "まだ読了した本はありません。"
+                        }
+                    </p>
+                `
+            }
+
+        </div>
+
+    `;
+
+    switchBookshelfTab("want");
+
+}
+
+
+// ========================================
+// 読了した本を保存
+// ========================================
+
+function saveFinishedBook(book) {
+
+    if (!book) {
+        return;
+    }
+
+    const saved =
+        localStorage.getItem(
+            "finishedBooks"
+        );
+
+    let finishedBooks = [];
+
+    if (saved) {
+        finishedBooks =
+            JSON.parse(saved);
+    }
+
+    finishedBooks.push(book);
+
+    localStorage.setItem(
+        "finishedBooks",
+        JSON.stringify(finishedBooks)
+    );
+
+}
+
+
+// ========================================
+// 読了した本を削除
+// ========================================
+
+function deleteFinishedBook(index) {
+
+    const saved =
+        localStorage.getItem(
+            "finishedBooks"
+        );
+
+    if (!saved) {
+        return;
+    }
+
+    const finishedBooks =
+        JSON.parse(saved);
+
+    const book =
+        finishedBooks[index];
+
+    if (!book) {
+        return;
+    }
+
+    if (
+        !confirm(
+            `「${book.title}」を読了から削除しますか？`
+        )
+    ) {
+        return;
+    }
+
+    finishedBooks.splice(
+        index,
+        1
+    );
+
+    localStorage.setItem(
+        "finishedBooks",
+        JSON.stringify(finishedBooks)
+    );
+
+    updateStatistics();
+    displayBookshelf();
+
+}
+
+
+// ========================================
+// 本の詳細を表示
+// =========================================
+
+
+// ========================================
+// 本の詳細を表示
+// ========================================
+
+function showBookDetail(type, index) {
+
+    const detail =
+        document.getElementById(
+            "bookDetail"
+        );
+
+    const content =
+        document.getElementById(
+            "bookDetailContent"
+        );
+
+    if (!detail || !content) {
+        return;
+    }
+
+    let book = null;
+
+    if (type === "want") {
+
+        const saved =
+            localStorage.getItem(
+                "wantToReadBooks"
+            );
+
+        if (saved) {
+            book =
+                JSON.parse(saved)[index];
+        }
+
+    } else if (type === "current") {
+
+        const saved =
+            localStorage.getItem(
+                "currentBook"
+            );
+
+        if (saved) {
+            book =
+                JSON.parse(saved);
+        }
+
+    } else if (type === "finished") {
+
+        const saved =
+            localStorage.getItem(
+                "finishedBooks"
+            );
+
+        if (saved) {
+            book =
+                JSON.parse(saved)[index];
+        }
+
+    }
+
+    if (!book) {
+        return;
+    }
+
+    const memos =
+        getBookMemos(book);
+
+    let progressHtml = "";
+
+    if (
+        type === "current" &&
+        book.totalPages
+    ) {
+
+        const currentPage =
+            Number(book.currentPage) || 0;
+
+        const totalPages =
+            Number(book.totalPages);
+
+        const percent =
+            Math.min(
+                100,
+                Math.round(
+                    currentPage /
+                    totalPages *
+                    100
+                )
+            );
+
+        progressHtml = `
+            <h3>📖 読書進捗</h3>
+
+            <p>
+                ${currentPage}
+                /
+                ${totalPages}
+                ページ
+                （${percent}%）
+            </p>
+        `;
+
+    }
+
+    if (type === "finished") {
+
+        progressHtml = `
+            <h3>🎉 読了</h3>
+
+            <p>
+                読了日：
+                ${book.finishedDate || "記録なし"}
+            </p>
+        `;
+
+    }
+
+    content.innerHTML = `
+
+        <h3>
+            📕 ${book.title}
+        </h3>
+
+        <p>
+            著者：
+            ${book.author || "著者不明"}
+        </p>
+
+        ${progressHtml}
+
+        <h3>📝 この本のメモ</h3>
+
+        ${
+            memos.length > 0
+
+            ?
+
+            memos
+                .slice()
+                .reverse()
+                .map(function(memo) {
+
+                    return `
+                        <div
+                            style="
+                                border:1px solid #ccc;
+                                padding:10px;
+                                margin:10px 0;
+                            "
+                        >
+                            <p>
+                                📅 ${memo.date || ""}
+                            </p>
+
+                            <p>
+                                ${memo.text || ""}
+                            </p>
+                        </div>
+                    `;
+
+                })
+                .join("")
+
+            :
+
+            `<p>この本のメモはありません。</p>`
+        }
+
+        <button
+            onclick="closeBookDetail()"
+        >
+            ✕ 閉じる
+        </button>
+
+    `;
+
+    detail.style.display =
+        "block";
+
+    detail.scrollIntoView({
+        behavior: "smooth"
+    });
+
+}
+
+
+// ========================================
+// 本のメモを取得
+// ========================================
+
+function getBookMemos(book) {
+
+    if (
+        book.memos &&
+        Array.isArray(book.memos)
+    ) {
+        return book.memos;
+    }
+
+    const saved =
+        localStorage.getItem(
+            "readingMemos"
+        );
+
+    if (!saved) {
+        return [];
+    }
+
+    const memos =
+        JSON.parse(saved);
+
+    return memos.filter(function(memo) {
+
+        return (
+            memo.bookTitle === book.title
+        );
+
+    });
+
+}
+
+
+// ========================================
+// 本の詳細を閉じる
+// ========================================
+
+function closeBookDetail() {
+
+    const detail =
+        document.getElementById(
+            "bookDetail"
+        );
+
+    if (detail) {
+        detail.style.display =
+            "none";
+    }
+
+}
+
+
+function addWantBook() {
+
+    const title =
+        document.getElementById(
+            "wantBookTitle"
+        ).value.trim();
+
+    const author =
+        document.getElementById(
+            "wantBookAuthor"
+        ).value.trim();
+
+    if (!title) {
+
+        alert(
+            "本のタイトルを入力してください。"
+        );
+
+        return;
+    }
+
+    const savedBooks =
+        localStorage.getItem(
+            "wantToReadBooks"
+        );
+
+    let wantBooks = [];
+
+    if (savedBooks) {
+        wantBooks =
+            JSON.parse(savedBooks);
+    }
+
+    const alreadyExists =
+        wantBooks.some(function(book) {
+            return book.title === title;
+        });
+
+    if (alreadyExists) {
+
+        alert(
+            "この本はすでに「読みたい」に登録されています。"
+        );
+
+        return;
+    }
+
+    wantBooks.push({
+
+        title:
+            title,
+
+        author:
+            author || "著者不明",
+
+        coverUrl:
+            null
+
+    });
+
+    localStorage.setItem(
+        "wantToReadBooks",
+        JSON.stringify(wantBooks)
+    );
+
+    document.getElementById(
+        "wantBookTitle"
+    ).value = "";
+
+    document.getElementById(
+        "wantBookAuthor"
+    ).value = "";
+
+    const searchInput =
+        document.getElementById(
+            "bookshelfSearch"
+        );
+
+    if (searchInput) {
+        searchInput.value = "";
+    }
+
+    displayBookshelf();
+
+}
+
+
+// ========================================
+// 読みたい本を読み始める
+// ========================================
+
+function startWantBook(index) {
+
+    const savedBooks =
+        localStorage.getItem(
+            "wantToReadBooks"
+        );
+
+    if (!savedBooks) {
+        return;
+    }
+
+    const wantBooks =
+        JSON.parse(savedBooks);
+
+    const book =
+        wantBooks[index];
+
+    if (!book) {
+        return;
+    }
+
+    const savedCurrentBook =
+        localStorage.getItem(
+            "currentBook"
+        );
+
+    if (savedCurrentBook) {
+
+        alert(
+            "現在読んでいる本があります。先にその本を読了するか削除してください。"
+        );
+
+        return;
+    }
+
+    const totalPagesText =
+        prompt(
+            `「${book.title}」の全ページ数を入力してください。`
+        );
+
+    if (totalPagesText === null) {
+        return;
+    }
+
+    const totalPages =
+        Number(totalPagesText);
+
+    if (!totalPages || totalPages < 1) {
+
+        alert(
+            "全ページ数を1以上で入力してください。"
+        );
+
+        return;
+    }
+
+    const currentBook = {
+
+        title:
+            book.title,
+
+        author:
+            book.author,
+
+        totalPages:
+            totalPages,
+
+        currentPage:
+            0,
+
+        status:
+            "reading"
+
+    };
+
+    localStorage.setItem(
+        "currentBook",
+        JSON.stringify(currentBook)
+    );
+
+    wantBooks.splice(index, 1);
+
+    localStorage.setItem(
+        "wantToReadBooks",
+        JSON.stringify(wantBooks)
+    );
+
+    displayBook(currentBook);
+
+    displayProgress(currentBook);
+
+    displayBookshelf();
+
+}
+
+
+// ========================================
+// 読みたい本を削除
+// ========================================
+
+function deleteWantBook(index) {
+
+    const savedBooks =
+        localStorage.getItem(
+            "wantToReadBooks"
+        );
+
+    if (!savedBooks) {
+        return;
+    }
+
+    const wantBooks =
+        JSON.parse(savedBooks);
+
+    const book =
+        wantBooks[index];
+
+    if (!book) {
+        return;
+    }
+
+    const confirmed =
+        confirm(
+            `「${book.title}」を「読みたい」から削除しますか？`
+        );
+
+    if (!confirmed) {
+        return;
+    }
+
+    wantBooks.splice(index, 1);
+
+    localStorage.setItem(
+        "wantToReadBooks",
+        JSON.stringify(wantBooks)
+    );
+
+    displayBookshelf();
+
+}
+
+
+// ========================================
+// 読書進捗を表示
+// ========================================
+
+function displayProgress(book) {
+
+
+    const progressArea =
+        document.getElementById(
+            "progressArea"
+        );
+
+
+    let percentage =
+        Math.round(
+            (book.currentPage /
+                book.totalPages) * 100
+        );
+
+
+    if (percentage > 100) {
+
+        percentage = 100;
+
+    }
+
+
+    progressArea.innerHTML = `
+
+        <div class="progress-card">
+
+            <p class="progress-pages">
+
+                ${book.currentPage}
+                /
+                ${book.totalPages}
+                ページ
+
+            </p>
+
+
+            <div class="progress-bar">
+
+                <div
+                    class="progress-fill"
+                    style="width:${percentage}%"
+                ></div>
+
+            </div>
+
+
+            <p class="progress-percent">
+
+                ${percentage}%
+
+            </p>
+
+
+            <p>
+                📖 現在のページ
+            </p>
+
+
+            <input
+                type="number"
+                id="currentPage"
+                value="${book.currentPage}"
+                min="0"
+                max="${book.totalPages}"
+            >
+
+
+            <button onclick="saveProgress()">
+                💾 進捗を保存
+            </button>
+
+        </div>
+
+    `;
+
+}
+
+
+
+// ========================================
+// 進捗を保存
+// ========================================
+
+function saveProgress() {
+
+
+    const savedBook =
+        localStorage.getItem(
+            "currentBook"
+        );
+
+
+    if (!savedBook) {
+
+        return;
+
+    }
+
+
+    const book =
+        JSON.parse(savedBook);
+
+
+    const page =
+        Number(
+            document.getElementById(
+                "currentPage"
+            ).value
+        );
+
+
+    if (page < 0) {
+
+        alert(
+            "ページ数は0以上にしてください。"
+        );
+
+        return;
+
+    }
+
+
+    if (page > book.totalPages) {
+
+        alert(
+            "全ページ数を超えています。"
+        );
+
+        return;
+
+    }
+
+
+    book.currentPage =
+        page;
+
+
+    localStorage.setItem(
+        "currentBook",
+        JSON.stringify(book)
+    );
+
+
+    displayProgress(book);
+
+
+}
+
+
+
+// ========================================
+// メモを保存
+// ========================================
+
+function saveMemo() {
+
+
+    const savedBook =
+        localStorage.getItem(
+            "currentBook"
+        );
+
+
+    if (!savedBook) {
+
+        alert(
+            "先に読んでいる本を登録してください。"
+        );
+
+        return;
+
+    }
+
+
+    const book =
+        JSON.parse(savedBook);
+
+
+    const memoText =
+        document.getElementById(
+            "memoText"
+        ).value;
+
+
+    if (!memoText.trim()) {
+
+        alert(
+            "メモを入力してください。"
+        );
+
+        return;
+
+    }
+
+
+    const savedMemos =
+        localStorage.getItem(
+            "readingMemos"
+        );
+
+
+    let memos = [];
+
+
+    if (savedMemos) {
+
+        memos =
+            JSON.parse(savedMemos);
+
+    }
+
+
+    const memo = {
+
+        bookTitle:
+            book.title,
+
+        text:
+            memoText,
+
+        date:
+            new Date().toLocaleDateString(
+                "ja-JP"
+            )
+
+    };
+
+
+    memos.push(memo);
+
+
+    localStorage.setItem(
+        "readingMemos",
+        JSON.stringify(memos)
+    );
+
+
+    document.getElementById(
+        "memoText"
+    ).value = "";
+
+    const memoSearch =
+        document.getElementById(
+            "memoSearch"
+        );
+
+    if (memoSearch) {
+        memoSearch.value = "";
+    }
+
+    displayMemos();
+
+}
+
+
+
+// ========================================
+// メモを表示
+// ========================================
+
+function displayMemos() {
+
+    const memoArea =
+        document.getElementById(
+            "memoList"
+        );
+
+    if (!memoArea) {
+        return;
+    }
+
+    const savedMemos =
+        localStorage.getItem(
+            "readingMemos"
+        );
+
+    if (!savedMemos) {
+
+        memoArea.innerHTML = `
+            <p>
+                まだメモはありません。
+            </p>
+        `;
+
+        return;
+    }
+
+    const memos =
+        JSON.parse(savedMemos);
+
+    if (memos.length === 0) {
+
+        memoArea.innerHTML = `
+            <p>
+                まだメモはありません。
+            </p>
+        `;
+
+        return;
+    }
+
+    memoArea.innerHTML = "";
+
+    memos
+        .slice()
+        .reverse()
+        .forEach(function(memo) {
+
+            memoArea.innerHTML += `
+
+                <div
+                    style="
+                        border:1px solid #ccc;
+                        padding:10px;
+                        margin:10px 0;
+                        border-radius:8px;
+                    "
+                >
+
+                    <p>
+                        📕 ${memo.bookTitle || "本のタイトル不明"}
+                    </p>
+
+                    <p>
+                        📅 ${memo.date || ""}
+                    </p>
+
+                    <p>
+                        ${memo.text || ""}
+                    </p>
+
+                </div>
+
+            `;
+
+        });
+
+}
+
+
+// ========================================
+// すべての本のメモを検索
+// ========================================
+
+function searchAllMemos() {
+
+    const input =
+        document.getElementById(
+            "globalMemoSearch"
+        );
+
+    const keyword =
+        input
+        ? input.value.trim().toLowerCase()
+        : "";
+
+    renderAllMemos(keyword);
+
+}
+
+
+// ========================================
+// すべての本のメモを描画
+// ========================================
+
+function renderAllMemos(keyword) {
+
+    const memoArea =
+        document.getElementById(
+            "globalMemoList"
+        );
+
+    if (!memoArea) {
+        return;
+    }
+
+    const savedMemos =
+        localStorage.getItem(
+            "readingMemos"
+        );
+
+    if (!savedMemos) {
+
+        memoArea.innerHTML = `
+            <p>
+                まだメモはありません。
+            </p>
+        `;
+
+        return;
+    }
+
+    const memos =
+        JSON.parse(savedMemos);
+
+    let filteredMemos =
+        memos;
+
+    if (keyword) {
+
+        filteredMemos =
+            memos.filter(function(memo) {
+
+                const memoText =
+                    String(
+                        memo.text || ""
+                    ).toLowerCase();
+
+                const bookTitle =
+                    String(
+                        memo.bookTitle || ""
+                    ).toLowerCase();
+
+                return (
+                    memoText.includes(keyword) ||
+                    bookTitle.includes(keyword)
+                );
+
+            });
+
+    }
+
+    if (filteredMemos.length === 0) {
+
+        memoArea.innerHTML = `
+            <p>
+                ${
+                    keyword
+                    ? `「${keyword}」を含むメモはありません。`
+                    : "まだメモはありません。"
+                }
+            </p>
+        `;
+
+        return;
+
+    }
+
+    memoArea.innerHTML = "";
+
+    filteredMemos
+        .slice()
+        .reverse()
+        .forEach(function(memo) {
+
+            memoArea.innerHTML += `
+
+                <div
+                    style="
+                        border:1px solid #ccc;
+                        padding:10px;
+                        margin:10px 0;
+                        border-radius:8px;
+                    "
+                >
+
+                    <p>
+                        📕 ${memo.bookTitle || "本のタイトル不明"}
+                    </p>
+
+                    <p>
+                        📅 ${memo.date || ""}
+                    </p>
+
+                    <p>
+                        ${memo.text || ""}
+                    </p>
+
+                </div>
+
+            `;
+
+        });
+
+}
+
+
+// ========================================
+// 読了する
+// ========================================
+
+function finishBook() {
+
+
+    const savedBook =
+        localStorage.getItem(
+            "currentBook"
+        );
+
+
+    if (!savedBook) {
+
+        return;
+
+    }
+
+
+    const book =
+        JSON.parse(savedBook);
+
+
+    const today =
+        new Date();
+
+
+    const year =
+        today.getFullYear();
+
+
+    const month =
+        today.getMonth() + 1;
+
+
+    const day =
+        today.getDate();
+
+
+    book.finishedDate =
+        `${year}-${month}-${day}`;
+
+
+    book.status =
+        "finished";
+
+    const savedMemos =
+        localStorage.getItem(
+            "readingMemos"
+        );
+
+
+    let bookMemos = [];
+
+
+    if (savedMemos) {
+
+        const allMemos =
+            JSON.parse(savedMemos);
+
+
+        bookMemos =
+            allMemos.filter(function(memo) {
+
+                return (
+                    memo.bookTitle ===
+                    book.title
+                );
+
+            });
+
+    }
+
+
+    book.memos =
+        bookMemos;
+
+
+    saveFinishedBook(book);
+
+
+    localStorage.removeItem(
+        "currentBook"
+    );
+
+
+    document.getElementById(
+        "currentBook"
+    ).innerHTML = `
+
+        <p>
+            🎉 読了おめでとうございます！
+        </p>
+
+        <p>
+            「${book.title}」を
+            読み終わりました。
+        </p>
+
+    `;
+
+
+    if (bookMemos.length > 0) {
+
+        document.getElementById(
+            "memoList"
+        ).innerHTML = `
+
+            <p>
+                📚 読了した本のメモ
+            </p>
+
+            ${bookMemos.map(function(memo) {
+
+                return `
+
+                    <div>
+
+                        <p>
+                            📅 ${memo.date}
+                        </p>
+
+                        <p>
+                            ${memo.text}
+                        </p>
+
+                    </div>
+
+                    <hr>
+
+                `;
+
+            }).join("")}
+
+        `;
+
+    }
+
+
+    document.getElementById(
+        "progressArea"
+    ).innerHTML = `
+
+        <div class="progress-card">
+
+            <p>
+                🎉 読了！
+            </p>
+
+            <p>
+                ${book.totalPages}
+                /
+                ${book.totalPages}
+                ページ
+            </p>
+
+            <div class="progress-bar">
+
+                <div
+                    class="progress-fill"
+                    style="width:100%"
+                ></div>
+
+            </div>
+
+            <p>
+                100%
+            </p>
+
+        </div>
+
+    `;
+
+
+
+    updateStatistics();
+    displayBookshelf();
+
+}
+
+
+
+// ========================================
+// 今読んでいる本を削除
+// ========================================
+
+function deleteCurrentBook() {
+
+    const savedBook =
+        localStorage.getItem("currentBook");
+
+    if (!savedBook) {
+        return;
+    }
+
+    const book =
+        JSON.parse(savedBook);
+
+    const confirmed =
+        confirm(
+            `「${book.title}」を削除しますか？\n\nこの本の読書進捗と、この本に保存したメモも削除されます。`
+        );
+
+    if (!confirmed) {
+        return;
+    }
+
+    localStorage.removeItem("currentBook");
+
+    const savedMemos =
+        localStorage.getItem("readingMemos");
+
+    if (savedMemos) {
+
+        const memos =
+            JSON.parse(savedMemos);
+
+        const remainingMemos =
+            memos.filter(function(memo) {
+                return memo.bookTitle !== book.title;
+            });
+
+        localStorage.setItem(
+            "readingMemos",
+            JSON.stringify(remainingMemos)
+        );
+    }
+
+    document.getElementById(
+        "currentBook"
+    ).innerHTML = `
+        <p>
+            本を削除しました。
+        </p>
+    `;
+
+    document.getElementById(
+        "progressArea"
+    ).innerHTML = `
+        <p>
+            本を登録すると進捗を記録できます。
+        </p>
+    `;
+
+    const memoSearch =
+        document.getElementById(
+            "memoSearch"
+        );
+
+    if (memoSearch) {
+        memoSearch.value = "";
+    }
+
+    displayMemos();
+    displayBookshelf();
+}
+
+
+// ========================================
+// 読了冊数を計算
+// ========================================
+
+function updateStatistics() {
+
+    const savedFinishedBooks =
+        localStorage.getItem(
+            "finishedBooks"
+        );
+
+    let finishedBooks = [];
+
+    if (savedFinishedBooks) {
+
+        try {
+
+            finishedBooks =
+                JSON.parse(
+                    savedFinishedBooks
+                );
+
+        } catch (error) {
+
+            console.log(
+                "読了本データを読み込めませんでした。",
+                error
+            );
+
+            finishedBooks = [];
+
+        }
+
+    }
+
+    const today =
+        new Date();
+
+    const currentYear =
+        today.getFullYear();
+
+    const currentMonth =
+        today.getMonth() + 1;
+
+    let monthlyCount = 0;
+    let yearlyCount = 0;
+
+    const months = {};
+
+    finishedBooks.forEach(function(book) {
+
+        if (!book.finishedDate) {
+            return;
+        }
+
+        const parts =
+            String(
+                book.finishedDate
+            ).split("-");
+
+        if (parts.length < 2) {
+            return;
+        }
+
+        const year =
+            Number(parts[0]);
+
+        const month =
+            Number(parts[1]);
+
+        if (
+            !year ||
+            !month
+        ) {
+            return;
+        }
+
+        if (
+            year === currentYear
+        ) {
+
+            yearlyCount++;
+
+        }
+
+        if (
+            year === currentYear &&
+            month === currentMonth
+        ) {
+
+            monthlyCount++;
+
+        }
+
+        const key =
+            `${year}-${month}`;
+
+        if (!months[key]) {
+            months[key] = 0;
+        }
+
+        months[key]++;
+
+    });
+
+    const monthlyElement =
+        document.getElementById(
+            "monthlyCount"
+        );
+
+    const yearlyElement =
+        document.getElementById(
+            "yearlyCount"
+        );
+
+    const totalElement =
+        document.getElementById(
+            "totalCount"
+        );
+
+    if (monthlyElement) {
+        monthlyElement.textContent =
+            monthlyCount;
+    }
+
+    if (yearlyElement) {
+        yearlyElement.textContent =
+            yearlyCount;
+    }
+
+    if (totalElement) {
+        totalElement.textContent =
+            finishedBooks.length;
+    }
+
+    const monthlyArea =
+        document.getElementById(
+            "monthlyHistory"
+        );
+
+    if (!monthlyArea) {
+        return;
+    }
+
+    const monthKeys =
+        Object.keys(months);
+
+    if (monthKeys.length === 0) {
+
+        monthlyArea.innerHTML = `
+            <p>
+                まだ読了した本はありません。
+            </p>
+        `;
+
+        return;
+    }
+
+    monthKeys.sort(
+        function(a, b) {
+            return b.localeCompare(a);
+        }
+    );
+
+    const maxCount =
+        Math.max(
+            ...monthKeys.map(
+                function(key) {
+                    return months[key];
+                }
+            )
+        );
+
+    monthlyArea.innerHTML = "";
+
+    monthKeys.forEach(function(key) {
+
+        const parts =
+            key.split("-");
+
+        const year =
+            parts[0];
+
+        const month =
+            parts[1];
+
+        const count =
+            months[key];
+
+        const barWidth =
+            Math.max(
+                10,
+                (count / maxCount) * 100
+            );
+
+        monthlyArea.innerHTML += `
+
+            <div class="month-row">
+
+                <div class="month-label">
+                    ${year}年${month}月
+                </div>
+
+                <div class="bar-area">
+
+                    <div
+                        class="reading-bar"
+                        style="
+                            width:${barWidth}%;
+                        "
+                    ></div>
+
+                </div>
+
+                <div class="month-count">
+                    ${count}冊
+                </div>
+
+            </div>
+
+        `;
+
+    });
+
+}
+
+function changeBGM() {
+
+    const bgm =
+        document.getElementById(
+            "bgm"
+        );
+
+    const select =
+        document.getElementById(
+            "bgmSelect"
+        );
+
+    if (!bgm || !select) {
+        return;
+    }
+
+    bgm.pause();
+
+    bgm.src =
+        select.value;
+
+    bgm.load();
+
+    bgm.volume =
+        document.getElementById(
+            "volume"
+        ).value;
+
+}
+
+
+
+function playBGM() {
+
+
+    const bgm =
+        document.getElementById(
+            "bgm"
+        );
+
+
+    bgm.play();
+
+}
+
+
+
+function pauseBGM() {
+
+
+    const bgm =
+        document.getElementById(
+            "bgm"
+        );
+
+
+    bgm.pause();
+
+}
+
+
+
+function changeVolume() {
+
+
+    const bgm =
+        document.getElementById(
+            "bgm"
+        );
+
+
+    const volume =
+        document.getElementById(
+            "volume"
+        ).value;
+
+
+    bgm.volume =
+        volume;
+
+}
+
+
+
+
+// ========================================
+// 以前の読書履歴を読了本へ移行
+// ========================================
+
+function migrateReadingHistory() {
+
+    const oldHistory =
+        localStorage.getItem(
+            "readingHistory"
+        );
+
+    const finished =
+        localStorage.getItem(
+            "finishedBooks"
+        );
+
+    if (
+        oldHistory &&
+        !finished
+    ) {
+
+        localStorage.setItem(
+            "finishedBooks",
+            oldHistory
+        );
+
+    }
+
+}
+
+
+// ========================================
+// 最初に実行
+// ========================================
+
+migrateReadingHistory();
+
+localStorage.removeItem("readingHistory");
+
+loadBook();
+
+
+updateStatistics();
+
+displayMemos();
+renderAllMemos("");
+
+displayBookshelf();
+
+
+document.getElementById(
+    "bgm"
+).volume = 0.5;
+
+
+</script>
+
+
+</body>
+
+</html>
