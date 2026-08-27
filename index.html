@@ -108,6 +108,40 @@ textarea::placeholder {
     color: #111111 !important;
     font-weight: 500;
 }
+
+
+/* ===== コンパクト表示 ===== */
+details.compact-section {
+    margin: 10px 0;
+    border: 1px solid rgba(120, 100, 80, 0.25);
+    border-radius: 14px;
+    background: rgba(255,255,255,0.58);
+    overflow: hidden;
+}
+
+details.compact-section > summary {
+    cursor: pointer;
+    list-style: none;
+    padding: 12px 16px;
+    font-size: 1.05rem;
+    font-weight: 800;
+    user-select: none;
+}
+
+details.compact-section > summary::-webkit-details-marker { display:none; }
+details.compact-section > summary::after {
+    content: '▶';
+    float: right;
+    font-size: 0.8em;
+    margin-top: 3px;
+    transition: transform 0.15s ease;
+}
+details.compact-section[open] > summary::after { transform: rotate(90deg); }
+details.compact-section > .section-body {
+    padding: 0 16px 14px;
+}
+details.compact-section > .section-body > h2 { display:none; }
+
 </style>
 
 
@@ -137,6 +171,9 @@ textarea::placeholder {
      BGM
 ============================== -->
 
+<details class="compact-section" open>
+<summary>🎵 読書BGM</summary>
+<div class="section-body">
 <h2>🎵 読書BGM</h2>
 
 <p>
@@ -147,20 +184,25 @@ textarea::placeholder {
     id="bgmSelect"
     onchange="changeBGM()"
 >
+    
+    <option value="music/clair-de-Lune.mp3">
+        🎹 ドビュッシー / 月の光
+    </option>
+    
     <option value="music/nocturne-op9-2.mp3">
-        🎹 ショパン / ノクターン Op.9-2
+        🎹 ショパン / ノクターン
     </option>
 
     <option value="music/gnossiennesno6.mp3">
-        🎹 サティ / グノシエンヌ第6番
+        🎹 サティ / グノシエンヌ
     </option>
 
     <option value="music/arabesque1.mp3">
-        🎹 ドビュッシー / アラベスク第1番
+        🎹 ドビュッシー / アラベスク
     </option>
 
     <option value="music/gymnopedies1.mp3">
-        🎹 サティ / ジムノペディ第1番
+        🎹 サティ / ジムノペディ
     </option>
 </select>
 
@@ -200,6 +242,12 @@ textarea::placeholder {
      本を登録
 ============================== -->
 
+
+</div>
+</details>
+<details class="compact-section">
+<summary>📚 今読んでいる本を登録</summary>
+<div class="section-body">
 <h2>📚 今読んでいる本を登録</h2>
 
 <p>本のタイトル</p>
@@ -260,6 +308,12 @@ textarea::placeholder {
      読みたい本を登録
 ============================== -->
 
+
+</div>
+</details>
+<details class="compact-section">
+<summary>📌 読みたい本を登録</summary>
+<div class="section-body">
 <h2>📌 読みたい本を登録</h2>
 
 <p>本のタイトル</p>
@@ -292,6 +346,12 @@ textarea::placeholder {
      読書メモ
 ============================== -->
 
+
+</div>
+</details>
+<details class="compact-section">
+<summary>📝 読書メモ</summary>
+<div class="section-body">
 <h2>📝 読書メモ</h2>
 <p>メモする本</p>
 <select id="memoBookSelect"></select>
@@ -331,6 +391,12 @@ textarea::placeholder {
      今読んでいる本
 ============================== -->
 
+
+</div>
+</details>
+<details class="compact-section">
+<summary>📖 今読んでいる本</summary>
+<div class="section-body">
 <h2>📖 今読んでいる本</h2>
 
 <div id="currentBook">
@@ -346,6 +412,12 @@ textarea::placeholder {
      本棚
 ============================== -->
 
+
+</div>
+</details>
+<details class="compact-section">
+<summary>📚 本棚</summary>
+<div class="section-body">
 <h2>📚 本棚</h2>
 
 <input
@@ -365,7 +437,13 @@ textarea::placeholder {
 
     <hr>
 
-    <h2>📖 本の詳細</h2>
+    
+</div>
+</details>
+<details class="compact-section">
+<summary>📖 本の詳細</summary>
+<div class="section-body">
+<h2>📖 本の詳細</h2>
 
     <div id="bookDetailContent"></div>
 
@@ -378,6 +456,12 @@ textarea::placeholder {
      読書進捗
 ============================== -->
 
+
+</div>
+</details>
+<details class="compact-section">
+<summary>📖 読書進捗</summary>
+<div class="section-body">
 <h2>📖 読書進捗</h2>
 
 <div id="progressArea">
@@ -402,6 +486,12 @@ textarea::placeholder {
      読書記録
 ============================== -->
 
+
+</div>
+</details>
+<details class="compact-section">
+<summary>📊 読書記録</summary>
+<div class="section-body">
 <h2>📊 読書記録</h2>
 
 
@@ -478,6 +568,9 @@ textarea::placeholder {
 </div>
 
 
+
+</div>
+</details>
 <script>
 
 
