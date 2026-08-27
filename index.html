@@ -685,54 +685,38 @@ function searchBookshelf() {
 // 本棚タブを切り替える
 // ========================================
 
-function switchBookshelfTab(tabName) {
+function switchBookshelfTab(tab) {
 
-    const tabs = [
-        "want",
-        "current",
-        "finished"
-    ];
+    const tabs =
+        ["want", "current", "finished"];
 
-    tabs.forEach(function(tab) {
-
-        const button =
-            document.getElementById(
-                "bookshelfTab-" + tab
-            );
+    tabs.forEach(function(name) {
 
         const content =
             document.getElementById(
-                "bookshelfContent-" + tab
+                "bookshelfContent-" + name
             );
 
-        if (button) {
-            button.classList.remove("active");
-        }
+        const button =
+            document.getElementById(
+                "bookshelfTab-" + name
+            );
 
         if (content) {
-            content.style.display = "none";
+            content.style.display =
+                name === tab
+                    ? "block"
+                    : "none";
         }
 
+        if (button) {
+            if (name === tab) {
+                button.classList.add("active");
+            } else {
+                button.classList.remove("active");
+            }
+        }
     });
-
-    const activeButton =
-        document.getElementById(
-            "bookshelfTab-" + tabName
-        );
-
-    const activeContent =
-        document.getElementById(
-            "bookshelfContent-" + tabName
-        );
-
-    if (activeButton) {
-        activeButton.classList.add("active");
-    }
-
-    if (activeContent) {
-        activeContent.style.display = "block";
-    }
-
 }
 
 
@@ -740,121 +724,258 @@ function switchBookshelfTab(tabName) {
 // 本棚を描画
 // ========================================
 
-function renderBookshelf(keyword) {
-    const bookshelf = document.getElementById("bookshelf");
-    if (!bookshelf) return;
+function renderBookshelf(keyword = "") {
+
+    const bookshelf =
+        document.getElementById("bookshelf");
+
+    if (!bookshelf) {
+        return;
+    }
 
     let wantBooks = [];
     let finishedBooks = [];
     const currentBooks = getCurrentBooks();
 
-    const savedWantBooks = localStorage.getItem("wantToReadBooks");
-    const savedFinishedBooks = localStorage.getItem("finishedBooks");
+    const savedWantBooks =
+        localStorage.getItem("wantToReadBooks");
+
+    const savedFinishedBooks =
+        localStorage.getItem("finishedBooks");
 
     if (savedWantBooks) {
-        try { wantBooks = JSON.parse(savedWantBooks); } catch (error) {}
+        try {
+            wantBooks = JSON.parse(savedWantBooks);
+            if (!Array.isArray(wantBooks)) {
+                wantBooks = [];
+            }
+        } catch (error) {
+            wantBooks = [];
+        }
     }
+
     if (savedFinishedBooks) {
-        try { finishedBooks = JSON.parse(savedFinishedBooks); } catch (error) {}
+        try {
+            finishedBooks = JSON.parse(savedFinishedBooks);
+            if (!Array.isArray(finishedBooks)) {
+                finishedBooks = [];
+            }
+        } catch (error) {
+            finishedBooks = [];
+        }
     }
+
+    const searchWord =
+        String(keyword || "").trim().toLowerCase();
 
     function matches(book) {
-        if (!keyword) return true;
-        const title = String(book.title || "").toLowerCase();
-        const author = String(book.author || "").toLowerCase();
-        const tags = Array.isArray(book.tags)
-            ? book.tags.join(" ").toLowerCase()
-            : "";
-        return title.includes(keyword) ||
-            author.includes(keyword) ||
-            tags.includes(keyword);
+
+        if (!searchWord) {
+            return true;
+        }
+
+        const title =
+            String(book.title || "").toLowerCase();
+
+        const author =
+            String(book.author || "").toLowerCase();
+
+        const tags =
+            Array.isArray(book.tags)
+                ? book.tags.join(" ").toLowerCase()
+                : "";
+
+        return (
+            title.includes(searchWord) ||
+            author.includes(searchWord) ||
+            tags.includes(searchWord)
+        );
     }
 
-    const filteredWantBooks = wantBooks.filter(matches);
-    const filteredCurrentBooks = currentBooks.filter(matches);
-    const filteredFinishedBooks = finishedBooks.filter(matches);
+    const filteredWantBooks =
+        wantBooks.filter(matches);
+
+    const filteredCurrentBooks =
+        currentBooks.filter(matches);
+
+    const filteredFinishedBooks =
+        finishedBooks.filter(matches);
 
     bookshelf.innerHTML = `
+
         <div class="bookshelf-tabs">
-            <button id="bookshelfTab-want" class="bookshelf-tab active"
-                onclick="switchBookshelfTab('want')">
+
+            <button
+                id="bookshelfTab-want"
+                class="bookshelf-tab active"
+                onclick="switchBookshelfTab('want')"
+            >
                 📌 読みたい (${filteredWantBooks.length})
             </button>
-            <button id="bookshelfTab-current" class="bookshelf-tab"
-                onclick="switchBookshelfTab('current')">
+
+            <button
+                id="bookshelfTab-current"
+                class="bookshelf-tab"
+                onclick="switchBookshelfTab('current')"
+            >
                 📖 読んでいる (${filteredCurrentBooks.length})
             </button>
-            <button id="bookshelfTab-finished" class="bookshelf-tab"
-                onclick="switchBookshelfTab('finished')">
+
+            <button
+                id="bookshelfTab-finished"
+                class="bookshelf-tab"
+                onclick="switchBookshelfTab('finished')"
+            >
                 📕 読了 (${filteredFinishedBooks.length})
             </button>
+
         </div>
 
-        <div id="bookshelfContent-want" class="bookshelf-tab-content">
+        <div
+            id="bookshelfContent-want"
+            class="bookshelf-tab-content"
+        >
             ${
-                filteredWantBooks.length
-                ? filteredWantBooks.slice().reverse().map(function(book) {
-                    const index = wantBooks.indexOf(book);
-                    return `
-                        <div class="bookshelf-book" onclick="showBookDetail('want', ${index})" style="cursor:pointer;">
-                            <p>📕 ${book.title}</p>
-                            <p>著者：${book.author || "著者不明"}</p>
-                            <button onclick="event.stopPropagation(); startWantBook(${index})">
-                                📖 この本を読み始める
-                            </button>
-                            <button onclick="event.stopPropagation(); deleteWantBook(${index})">
-                                🗑️ 削除
-                            </button>
-                        </div>
-                    `;
-                }).join("")
-                : `<p>${keyword ? "一致する本はありません。" : "読みたい本はまだありません。"}</p>`
+                filteredWantBooks.length > 0
+                    ? filteredWantBooks.slice().reverse().map(function(book) {
+
+                        const index =
+                            wantBooks.indexOf(book);
+
+                        return `
+                            <div
+                                class="bookshelf-book"
+                                onclick="showBookDetail('want', ${index})"
+                                style="cursor:pointer;"
+                            >
+                                <p>📕 ${book.title}</p>
+                                <p>著者：${book.author || "著者不明"}</p>
+
+                                <button
+                                    onclick="event.stopPropagation(); startWantBook(${index})"
+                                >
+                                    📖 この本を読み始める
+                                </button>
+
+                                <button
+                                    onclick="event.stopPropagation(); deleteWantBook(${index})"
+                                >
+                                    🗑️ 削除
+                                </button>
+                            </div>
+                        `;
+
+                    }).join("")
+                    : `
+                        <p>
+                            ${
+                                searchWord
+                                    ? "一致する本はありません。"
+                                    : "読みたい本はまだありません。"
+                            }
+                        </p>
+                    `
             }
         </div>
 
-        <div id="bookshelfContent-current" class="bookshelf-tab-content" style="display:none;">
+        <div
+            id="bookshelfContent-current"
+            class="bookshelf-tab-content"
+            style="display:none;"
+        >
             ${
-                filteredCurrentBooks.length
-                ? filteredCurrentBooks.map(function(book) {
-                    const index = currentBooks.indexOf(book);
-                    const tags = Array.isArray(book.tags) && book.tags.length
-                        ? book.tags.map(function(tag) { return "#" + tag; }).join(" ")
-                        : "タグなし";
+                filteredCurrentBooks.length > 0
+                    ? filteredCurrentBooks.map(function(book) {
 
-                    return `
-                        <div class="bookshelf-book"
-                            onclick="showBookDetail('current', ${index})"
-                            style="cursor:pointer;">
-                            <p>📕 ${book.title}</p>
-                            <p>著者：${book.author || "著者不明"}</p>
-                            <p>${book.currentPage || 0} / ${book.totalPages || 0} ページ</p>
-                            <p>⭐ ${rating}</p>
-                            <p>🏷️ ${tags}</p>
-                        </div>
-                    `;
-                }).join("")
-                : `<p>${keyword ? "一致する本はありません。" : "今読んでいる本はありません。"}</p>`
+                        const index =
+                            currentBooks.indexOf(book);
+
+                        const tags =
+                            Array.isArray(book.tags) && book.tags.length
+                                ? book.tags.map(function(tag) {
+                                    return "#" + tag;
+                                }).join(" ")
+                                : "タグなし";
+
+                        return `
+                            <div
+                                class="bookshelf-book"
+                                onclick="showBookDetail('current', ${index})"
+                                style="cursor:pointer;"
+                            >
+                                <p>📕 ${book.title}</p>
+                                <p>著者：${book.author || "著者不明"}</p>
+                                <p>
+                                    ${book.currentPage || 0}
+                                    /
+                                    ${book.totalPages || 0}
+                                    ページ
+                                </p>
+                                <p>🏷️ ${tags}</p>
+                            </div>
+                        `;
+
+                    }).join("")
+                    : `
+                        <p>
+                            ${
+                                searchWord
+                                    ? "一致する本はありません。"
+                                    : "今読んでいる本はありません。"
+                            }
+                        </p>
+                    `
             }
         </div>
 
-        <div id="bookshelfContent-finished" class="bookshelf-tab-content" style="display:none;">
+        <div
+            id="bookshelfContent-finished"
+            class="bookshelf-tab-content"
+            style="display:none;"
+        >
             ${
-                filteredFinishedBooks.length
-                ? filteredFinishedBooks.slice().reverse().map(function(book) {
-                    const index = finishedBooks.indexOf(book);
+                filteredFinishedBooks.length > 0
+                    ? filteredFinishedBooks.slice().reverse().map(function(book) {
 
-                    return `
-                        <div class="bookshelf-book"
-                            onclick="showBookDetail('finished', ${index})"
-                            style="cursor:pointer;">
-                            <p>📕 ${book.title}</p>
-                            <p>著者：${book.author || "著者不明"}</p>
-                            <p>⭐ ${rating}</p>
-                            <p>読了日：${book.finishedDate || "記録なし"}</p>
-                        </div>
-                    `;
-                }).join("")
-                : `<p>${keyword ? "一致する本はありません。" : "まだ読了した本はありません。"}</p>`
+                        const index =
+                            finishedBooks.indexOf(book);
+
+                        const rating =
+                            Number(book.rating) > 0
+                                ? "★".repeat(Number(book.rating))
+                                : "評価なし";
+
+                        const tags =
+                            Array.isArray(book.tags) && book.tags.length
+                                ? book.tags.map(function(tag) {
+                                    return "#" + tag;
+                                }).join(" ")
+                                : "タグなし";
+
+                        return `
+                            <div
+                                class="bookshelf-book"
+                                onclick="showBookDetail('finished', ${index})"
+                                style="cursor:pointer;"
+                            >
+                                <p>📕 ${book.title}</p>
+                                <p>著者：${book.author || "著者不明"}</p>
+                                <p>⭐ ${rating}</p>
+                                <p>🏷️ ${tags}</p>
+                                <p>📅 読了日：${book.finishedDate || "記録なし"}</p>
+                            </div>
+                        `;
+
+                    }).join("")
+                    : `
+                        <p>
+                            ${
+                                searchWord
+                                    ? "一致する本はありません。"
+                                    : "読了した本はまだありません。"
+                            }
+                        </p>
+                    `
             }
         </div>
     `;
@@ -1783,10 +1904,16 @@ function renderAllMemos(keyword) {
 // ========================================
 
 function finishBook(index) {
-    const books = getCurrentBooks();
-    const book = books[index];
 
-    if (!book) return;
+    const books =
+        getCurrentBooks();
+
+    const book =
+        books[index];
+
+    if (!book) {
+        return;
+    }
 
     const ratingInput =
         prompt(
@@ -1795,45 +1922,109 @@ function finishBook(index) {
 
     let rating = 0;
 
-    if (ratingInput !== null && ratingInput.trim() !== "") {
-        rating = Number(ratingInput);
+    if (
+        ratingInput !== null &&
+        ratingInput.trim() !== ""
+    ) {
 
-        if (!Number.isInteger(rating) || rating < 1 || rating > 5) {
-            alert("評価は1〜5の数字で入力してください。");
+        rating =
+            Number(ratingInput);
+
+        if (
+            !Number.isInteger(rating) ||
+            rating < 1 ||
+            rating > 5
+        ) {
+
+            alert(
+                "評価は1〜5の数字で入力してください。"
+            );
+
             return;
         }
     }
 
-    const today = new Date();
+    const today =
+        new Date();
 
-    book.rating = rating;
+    book.rating =
+        rating;
 
     book.finishedDate =
-        `${today.getFullYear()}-${today.getMonth() + 1}-${today.getDate()}`;
+        `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, "0")}-${String(today.getDate()).padStart(2, "0")}`;
 
-    book.status = "finished";
+    book.status =
+        "finished";
 
-    const savedMemos = localStorage.getItem("readingMemos");
+    const savedMemos =
+        localStorage.getItem("readingMemos");
 
     if (savedMemos) {
-        const allMemos = JSON.parse(savedMemos);
-        book.memos = allMemos.filter(function(memo) {
-            return memo.bookTitle === book.title;
-        });
+
+        try {
+
+            const allMemos =
+                JSON.parse(savedMemos);
+
+            book.memos =
+                Array.isArray(allMemos)
+                    ? allMemos.filter(function(memo) {
+                        return memo.bookTitle === book.title;
+                    })
+                    : [];
+
+        } catch (error) {
+
+            book.memos = [];
+
+        }
+
     } else {
+
         book.memos = [];
+
     }
 
-    saveFinishedBook(book);
+    const savedFinished =
+        localStorage.getItem("finishedBooks");
 
+    let finishedBooks = [];
+
+    if (savedFinished) {
+
+        try {
+
+            finishedBooks =
+                JSON.parse(savedFinished);
+
+            if (!Array.isArray(finishedBooks)) {
+                finishedBooks = [];
+            }
+
+        } catch (error) {
+
+            finishedBooks = [];
+
+        }
+    }
+
+    finishedBooks.push(book);
+
+    localStorage.setItem(
+        "finishedBooks",
+        JSON.stringify(finishedBooks)
+    );
+
+    // 現在読書中の本からだけ、この本を取り除く
     books.splice(index, 1);
+
     saveCurrentBooks(books);
 
     updateMemoBookSelect();
     displayBook();
     displayProgress();
-    updateStatistics();
     displayBookshelf();
+    updateStatistics();
     displayMemos();
     renderAllMemos("");
 }
@@ -2144,3 +2335,12 @@ document.getElementById(
 </body>
 
 </html>
+<script>
+window.addEventListener('DOMContentLoaded', function() {
+    if (typeof displayBookshelf === 'function') displayBookshelf();
+    if (typeof displayBook === 'function') displayBook();
+    if (typeof displayProgress === 'function') displayProgress();
+    if (typeof updateStatistics === 'function') updateStatistics();
+    if (typeof updateMemoBookSelect === 'function') updateMemoBookSelect();
+});
+</script>
