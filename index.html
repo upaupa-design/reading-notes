@@ -963,6 +963,12 @@ function renderBookshelf(keyword = "") {
                                 <p>⭐ ${rating}</p>
                                 <p>🏷️ ${tags}</p>
                                 <p>📅 読了日：${book.finishedDate || "記録なし"}</p>
+
+                                <button
+                                    onclick="event.stopPropagation(); deleteFinishedBook(${index})"
+                                >
+                                    🗑️ 読了記録を削除
+                                </button>
                             </div>
                         `;
 
